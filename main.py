@@ -127,13 +127,28 @@ def get_radar_chart(input_data):
   ))
 
   fig.update_layout(
+    width=700,  # Adjust size
+    height=700,
     polar=dict(
-      radialaxis=dict(
-        visible=True,
-        range=[0, 1]
-      )),
+        radialaxis=dict(
+            visible=True,
+            #range=[0, 1],
+            tickfont=dict(size=17)  # Increase radial axis tick font size
+        ),
+        angularaxis=dict(
+            tickfont=dict(size=17)  # Increase category label font size
+        )
+    ),
+    title=dict(
+        text="Cell Nuclei Measurements Radar Chart",
+        font=dict(size=22)  # Increase title font size
+    ),
+    legend=dict(
+        font=dict(size=14)  # Increase legend font size
+    ),
     showlegend=True
-  )
+)
+
   
   return fig
 
@@ -157,8 +172,8 @@ def add_predictions(input_data):
     st.write("<span class='diagnosis malicious'>Malicious</span>", unsafe_allow_html=True)
     
   
-  st.write("Probability of being benign: ", model.predict_proba(input_array_scaled)[0][0])
-  st.write("Probability of being malicious: ", model.predict_proba(input_array_scaled)[0][1])
+  st.write("Probability of being benign: ", round(model.predict_proba(input_array_scaled)[0][0], 5))
+  st.write("Probability of being malicious: ", round(model.predict_proba(input_array_scaled)[0][1], 5))
   
   st.write("This app can assist medical professionals in making a diagnosis, but should not be used as a substitute for a professional diagnosis.")
 
@@ -179,24 +194,26 @@ def main():
     """
     <style>
         section[data-testid="stSidebar"] {
-            background-color: #01DB4B;  /* Change this color */
+            background-color: #e4f0f1;  /* Change this color */
+            min-width: 100px;
+            max-width: 250px;
         }
     </style>
     """,
     unsafe_allow_html=True
 )
-  
+
   input_data = add_sidebar()
   
   with st.container():
     st.title("Breast Cancer Predictor")
-    st.write("Please connect this app to your cytology lab to help diagnose breast cancer form your tissue sample. This app predicts using a machine learning model whether a breast mass is benign or malignant based on the measurements it receives from your cytosis lab. You can also update the measurements by hand using the sliders in the sidebar. ")
+    st.write("The Breast Cancer Predictor is an advanced machine-learning-powered web application designed to assist medical professionals in diagnosing breast cancer. By analyzing key cell nuclei measurements from tissue samples, the app predicts whether a breast mass is benign or malignant with high accuracy. Users can input measurements manually or connect the app to a cytology lab for seamless data integration. Additionally, an interactive radar chart visually represents critical features, making it easier to interpret results. While this tool supports medical decision-making, it should be used alongside professional consultation for a comprehensive diagnosis. You can also update the measurements by hand using the sliders in the sidebar. ")
   
-  col1, col2 = st.columns([4,1])
+  col1, col2 = st.columns([5,1], gap="small", border=True, vertical_alignment="top")
   
   with col1:
     radar_chart = get_radar_chart(input_data)
-    st.plotly_chart(radar_chart)
+    st.plotly_chart(radar_chart, use_container_width=True, use_container_height=True)
   with col2:
     add_predictions(input_data)
 
